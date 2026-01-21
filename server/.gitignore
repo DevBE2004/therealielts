@@ -1,0 +1,8 @@
+node_modules
+.env
+model.txt
+dump.rdb
+data
+
+credentials.json
+server/config/credentials.json

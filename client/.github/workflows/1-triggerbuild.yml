@@ -1,0 +1,24 @@
+# This workflow sends the PR number to an EC2 instance when a pull request is closed.
+# It only triggers for pull requests that are closed and have the base branch 'develop'.
+# The payload includes the PR number, author, repository, base branch, head branch, and
+# the URL of the pull request.
+# The EC2 instance is expected to listen on port 8080 at the specified IP address
+# and handle the incoming JSON payload.
+name: Send PR number to On-Premise
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  notify:
+    #if: github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gửi PR number về EC2
+        run: |
+          PAYLOAD="{\"pr_number\": \"${{ github.event.number }}\", \"author\": \"${{ github.event.pull_request.user.login }}\", \"repo\": \"${{ github.repository }}\", \"base\": \"${{ github.event.pull_request.base.ref }}\", \"head\": \"${{ github.event.pull_request.head.ref }}\", \"pr_url\": \"${{ github.event.pull_request.html_url }}\"}"
+          echo "$PAYLOAD"
+          curl -X POST http://1.53.252.133:8080/github/ant/pr -H "Content-Type: application/json" -d "$PAYLOAD"
