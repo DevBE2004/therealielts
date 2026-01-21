@@ -1,30 +1,30 @@
 const { Op } = require('sequelize')
 const db = require('../models')
 const { client } = require('../config/redis.conf')
-const { appendToSheet } = require('../config/googleSheet')
+// const { appendToSheet } = require('../config/googleSheet')
 
 module.exports = {
   createConsultation: async (req, res) => {
     const consultation = await db.Consultation.create({
       ...req.body,
     })
-    if (consultation) {
-      await appendToSheet({
-        url: req.body?.url,
-        fullName: req.body?.name,
-        yearOfBirth: req.body.yearOfBirth,
-        ip:
-          req.headers['x-forwarded-for']?.split(',').shift() || req.socket?.remoteAddress || req.ip,
-        phone: req.body?.mobile,
-        email: req.body?.email,
-        program: req.body?.goal,
-        formName: req.body?.formName,
-        difficult: req.body?.difficult,
-        schedule: req.body?.schedule,
-        userAgent: req.headers['user-agent'],
-        atPlace: req.body?.atPlace,
-      })
-    }
+    // if (consultation) {
+    //   await appendToSheet({
+    //     url: req.body?.url,
+    //     fullName: req.body?.name,
+    //     yearOfBirth: req.body.yearOfBirth,
+    //     ip:
+    //       req.headers['x-forwarded-for']?.split(',').shift() || req.socket?.remoteAddress || req.ip,
+    //     phone: req.body?.mobile,
+    //     email: req.body?.email,
+    //     program: req.body?.goal,
+    //     formName: req.body?.formName,
+    //     difficult: req.body?.difficult,
+    //     schedule: req.body?.schedule,
+    //     userAgent: req.headers['user-agent'],
+    //     atPlace: req.body?.atPlace,
+    //   })
+    // }
     await client.flushAll()
     return res.json({
       success: Boolean(consultation),
